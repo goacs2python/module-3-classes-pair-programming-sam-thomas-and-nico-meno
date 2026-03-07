@@ -15,6 +15,35 @@ HEIGHT = 800
 bullets = []
 targets = []
 timer = 600
+def update():
+    for bullet in bullets:
+        global bulletX, bulletY, firing, yVel
+
+    if firing == False:
+
+        bulletX = mouseX + 10
+
+        bulletY = mouseY - 10
+
+    else:
+
+        bulletX += 10
+
+        bulletY -= yVel
+
+        yVel -= .2
+
+        
+
+    if bulletX >= 1020 or bulletY >= 820:
+
+        firing = False
+
+        bulletX = mouseX + 10
+
+        bulletY = mouseY - 10
+
+        yVel = 5
 
 class Target:
     def __init__(self, x, y):
@@ -40,13 +69,17 @@ def draw():
     if math.sqrt((bulletX - mouseX) ** 2 + (bulletY - mouseY) ** 2) < 30:
         targets.remove(target)
         bullets.remove(bullet)
-
+def bullet_radius():
+    return 10
+def target_radius():
+    return 20
 def countdown():
     global timer
     if timer > 0:
         timer -= 1
-    else:
-        timer = 600
+    elif timer <= 0:
+        print("Game Over")
+        exit()
 
 def spawn_target():
     x = random.randint(100, 900)
@@ -54,38 +87,21 @@ def spawn_target():
     target = Target(x, y)
     targets.append(target)
 
-def update():
-    global bulletX, bulletY, firing, yVel, bullets
-    for bullet in bullets:
-        bulletX += xVel
-        bulletY += yVel
-    else:
-        bulletX += 10
-        bulletY -= yVel
-        yVel -= .2
-    
+distance = math.sqrt((x2 - x1) ** 2 + (y2 - y1) ** 2)
+if distance < target_radius + bullet_radius:
+   
         
-    if bulletX >= 1020 or bulletY >= 820:
-        firing = False
-        bulletX = mouseX + 10
-        bulletY = mouseY - 10
-        yVel = 5
-
 def on_mouse_down(button):
-    global firing, bulletX, bulletY, yVel, xVel
-    if button == mouse.LEFT:
+       global firing, bulletX, bulletY, yVel, xVel
+       if button == mouse.LEFT:
+        firing = True 
         bulletX = mouseX + 10
         bulletY = mouseY - 10
         xVel = 10
         yVel = 5
-        bullets.append({"bulletX": bulletX, "bulletY": bulletY, "xVel": xVel, "yVel": yVel})
+        bullets.append(Bullet(bulletX, bulletY))
 
-
-
-
-        firing = True
-        bullets.append(Bullet(mouseX + 10, mouseY - 10))
-
+        
 def on_mouse_move(pos):
   global mouseX, mouseY
   mouseX, mouseY = pos
